@@ -4,10 +4,24 @@ Podría por ejemplo utilizar strings para las llaves. """
 
 
 from time import sleep
+import os
 
 asientos = {}
 CANT_ASIENTOS = 100
-def Datos_Asientos():
+
+def Limpiar_Pantalla():
+    # limpiar pantalla en Windows
+    if os.name == 'nt':
+        os.system('cls')
+    # limpiar pantalla en mac y Linux
+    else:
+        os.system('clear')
+        
+def Valida_Rut(rut):
+    print("rut: " ,rut)
+
+def Reserva_Asientos():
+    Limpiar_Pantalla()
     asiento = {}
     EDAD_MIN = 4
     EDAD_MAX = 100
@@ -18,22 +32,33 @@ def Datos_Asientos():
     PALCO_ADULTO = 5000
     PALCO_ADULTO_MAYOR = 4000
     precio = 0
+
+    print("Precios:")
+    print("Galería Niños: " ,str(GALERIA_NINO))
+    print("Palco Niños: " ,str(PALCO_NINO))
+    print("Galería Adultos: " ,str(GALERIA_ADULTO))
+    print("Palco Adultos: " ,str(PALCO_ADULTO))
+    print("Galería Adulto Mayor: " ,str(GALERIA_ADULTO_MAYOR))
+    print("Palco Adulto Mayor: " ,str(PALCO_ADULTO_MAYOR))
+    print("Asientos del 1 al 20: Palco, asientos del 21 al 100: Galería")
+    print("")
     num_asiento = int(input("Elija su número de asiento: "))
     while num_asiento in asientos:
         print("Este asiento ya está ocupado!!")
         num_asiento = int(input("Elija su número de asiento: "))
     rut = str(input("Ingrese su rut: "))
+    Valida_Rut(rut)
     nombre = str(input("Ingrese su nombre: "))
     edad = int(input("Ingrese su edad: "))
     while edad < EDAD_MIN or edad > EDAD_MAX:
         edad = int(input("Error, la edad debe ser mayor a {0} y menor a {1}. Ingrese su edad: ".format(EDAD_MIN,EDAD_MAX)))
-    if edad > EDAD_MIN and edad <= 18 and num_asiento > 20:
+    if edad > EDAD_MIN and edad < 18 and num_asiento > 20:
         precio = GALERIA_NINO
-    elif edad > EDAD_MIN and edad <= 18 and num_asiento <= 20:
+    elif edad > EDAD_MIN and edad < 18 and num_asiento <= 20:
         precio = PALCO_NINO
-    if edad > 18 and edad <= 60 and num_asiento > 20:
+    if edad >= 18 and edad <= 60 and num_asiento > 20:
         precio = GALERIA_ADULTO
-    elif edad > 18 and edad <= 60 and num_asiento <= 20:
+    elif edad >= 18 and edad <= 60 and num_asiento <= 20:
         precio = PALCO_ADULTO
     if edad > 60 and edad <= EDAD_MAX and num_asiento > 20:
         precio = GALERIA_ADULTO_MAYOR
@@ -53,23 +78,27 @@ def Datos_Asientos():
     print("Monto a pagar:", asiento["Precio"])
     
 def Asientos_Disponibles():
+    Limpiar_Pantalla()
     print("Asientos disponibles:")
     for i in range(1,CANT_ASIENTOS + 1):
         print(i)
     sleep(2)
     
 def Asientos_Ocupados():
+    Limpiar_Pantalla()
     print("Asientos ocupados:")
     for i in asientos.keys():
         print(i)
     sleep(2)
 
 def Total_Recaudado():
+    Limpiar_Pantalla()
     sumatoria = sum(asiento["Precio"] for asiento in asientos.values())
     print("El total recaudado es: " ,sumatoria)
     sleep(2)
 
 def Reembolsar_Asiento():
+    Limpiar_Pantalla()
     rut_reembolso = input("Ingrese el rut de la persona cuyo asiento desea reembolsar: ")
     asiento_reembolso = None
     for num_asiento, asiento in asientos.items():
@@ -89,6 +118,7 @@ def Reembolsar_Asiento():
         print("No se encontró ningún asiento asociado al rut ingresado.")
     sleep(2)
 def Menu():
+    Limpiar_Pantalla()
     print("Bienvenido, para comprar un asiento, seleccione una de las siguientes opciones")
     print("1: Comprar asiento")
     print("2: Reembolsar asiento")
@@ -107,7 +137,7 @@ def Opciones(opcion):
         
     while opcion != FINALIZAR:
         if opcion == "1":
-            Datos_Asientos()
+            Reserva_Asientos()
         elif opcion == "2":
             Reembolsar_Asiento()
         elif opcion == "3":
