@@ -7,7 +7,7 @@ from time import sleep
 import os
 
 asientos = {}
-CANT_ASIENTOS = 100
+CANT_ASIENTOS = 10*10
 
 def Limpiar_Pantalla():
     # limpiar pantalla en Windows
@@ -16,9 +16,33 @@ def Limpiar_Pantalla():
     # limpiar pantalla en mac y Linux
     else:
         os.system('clear')
-        
-def Valida_Rut(rut):
-    print("rut: " ,rut)
+
+def Formato_Valido(rut_p):
+    if "-" in rut_p:
+       i = 0
+       while rut_p[i] != "-":
+           if not rut_p[i].isdigit():
+               return(False)
+           i = i + 1
+       return(True)
+    else:
+        return(False) 
+
+def Rut_Valido(rut_p):
+    MULTIPLICA = "234567234567"
+    VERIFIFCADOR = " 123456789K0"
+    suma = 0
+    for i in range (rut_p.find("-")):
+        suma = suma + int(MULTIPLICA[i]) * int(rut_p[rut_p.find("-")-1-i])
+    resto = suma%11
+    indice = 11-resto
+    if VERIFIFCADOR[indice] == rut_p[rut_p.find("-")+1].upper():
+        return(True)
+    else:
+        return(False)
+
+#def Valida_Rut(rut):
+    #print("rut: " ,rut)
 
 def Reserva_Asientos():
     Limpiar_Pantalla()
@@ -46,8 +70,15 @@ def Reserva_Asientos():
     while num_asiento in asientos:
         print("Este asiento ya está ocupado!!")
         num_asiento = int(input("Elija su número de asiento: "))
-    rut = str(input("Ingrese su rut: "))
-    Valida_Rut(rut)
+    rut = input("Ingrese su rut sin puntos, con guion y digito verificador (ej:xxxxxxxx-x): ")
+    while not Formato_Valido(rut):
+        print("!!ERROR FORMATO NO VALIDO!!")
+        rut = input("Ingrese su rut sin puntos, con guion y digito verificador (ej:xxxxxxxx-x): ")
+    if Rut_Valido(rut):
+        print("Este rut es valido")
+    while not Rut_Valido(rut):
+        print("Este rut es invalido")
+        rut = input("Ingrese su rut sin puntos, con guion y digito verificador (ej:xxxxxxxx-x): ")
     nombre = str(input("Ingrese su nombre: "))
     edad = int(input("Ingrese su edad: "))
     while edad < EDAD_MIN or edad > EDAD_MAX:
@@ -76,12 +107,17 @@ def Reserva_Asientos():
     print("Nombre:", asiento["Nombre"])
     print("Edad:", asiento["Edad"])
     print("Monto a pagar:", asiento["Precio"])
-    
+
 def Asientos_Disponibles():
     Limpiar_Pantalla()
-    print("Asientos disponibles:")
-    for i in range(1,CANT_ASIENTOS + 1):
-        print(i)
+    for i in range(CANT_ASIENTOS):        
+        if i in asientos:
+            print("X",end=' ')
+        else:
+            print(i+1,end=' ')
+
+        if (i+1) % 10 == 0:
+            print()
     sleep(2)
     
 def Asientos_Ocupados():
@@ -117,6 +153,7 @@ def Reembolsar_Asiento():
     else:
         print("No se encontró ningún asiento asociado al rut ingresado.")
     sleep(2)
+
 def Menu():
     Limpiar_Pantalla()
     print("Bienvenido, para comprar un asiento, seleccione una de las siguientes opciones")
